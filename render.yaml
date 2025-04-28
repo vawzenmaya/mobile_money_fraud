@@ -1,9 +1,15 @@
+# services:
+#   - type: web
+#     name: fraud-detection-api
+#     env: python
+#     buildCommand: ./build.sh
+#     startCommand: gunicorn wsgi:app
+#     envVars:
+#       - key: PYTHON_VERSION
+#         value: 3.9.16
 services:
   - type: web
-    name: fraud-detection-api
+    name: your-app-name
     env: python
-    buildCommand: ./build.sh
-    startCommand: gunicorn wsgi:app
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.9.16
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
