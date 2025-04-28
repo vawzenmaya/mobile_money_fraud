@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import joblib
 import os
-from model_definitions import BYOL, StudentModel
+from app.model_definitions import BYOL, StudentModel
 
 class FraudDetector:
     def __init__(self, model_dir="app/models"):
@@ -15,17 +15,17 @@ class FraudDetector:
         self.student = self._load_student_model()
                 
         print("✅ All models loaded successfully")
-            
+        
     def _load_byol_model(self):
         model = BYOL(input_dim=9).to(self.device)
         model.load_state_dict(torch.load(os.path.join(self.model_dir, 'byol.pth'),
                                           map_location=self.device))
         model.eval()
         return model
-            
+        
     def _load_classifier(self):
         return joblib.load(os.path.join(self.model_dir, 'best_classifier_byol.pkl'))
-            
+        
     def _load_student_model(self):
         # Changed input dimension from 32 to 16 to match the saved model
         model = StudentModel(input_dim=16).to(self.device)
@@ -33,12 +33,12 @@ class FraudDetector:
                                           map_location=self.device))
         model.eval()
         return model
-        
+    
     def preprocess(self, features):
         # Convert to tensor
         features_tensor = torch.FloatTensor([features]).to(self.device)
         return features_tensor
-        
+    
     def predict(self, features):
         # Preprocess input
         features_tensor = self.preprocess(features)

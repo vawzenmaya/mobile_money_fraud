@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 import pandas as pd
 import json
 import os
-from utils import load_models, preprocess_input
+from .utils import load_models, preprocess_input
 import torch
 import numpy as np
 import io
