@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
-from utils import FraudDetector  # Changed from .utils to app.utils
+from utils import FraudDetector
 import traceback
 
-app = Flask(__name__)
+app = Flask(__name__)  # This line is crucial - it defines the Flask app instance
 detector = FraudDetector()
 
 @app.route('/predict', methods=['POST'])

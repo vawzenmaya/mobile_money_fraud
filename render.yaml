@@ -3,7 +3,7 @@ services:
     name: fraud-detection-api
     env: python
     buildCommand: ./build.sh
-    startCommand: gunicorn app.api:app
+    startCommand: gunicorn wsgi:app
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.16
