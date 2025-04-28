@@ -27,38 +27,32 @@ def predict_single():
         # Preprocess input data
         input_tensor = preprocess_input(features)
         
-        # Generate BYOL embeddings
+        # Generate BYOL embeddings (feature extraction only)
         with torch.no_grad():
             embeddings = byol.get_embeddings(input_tensor)
-            embeddings_np = embeddings.cpu().numpy()
-        
-            # Get predictions from both classifiers
-            byol_probs = best_classifier_byol.predict_proba(embeddings_np)
-        
+            
             # Since student model expects 16 dimensions, we need to adjust
             student_input_data = embeddings[:, :16]
+            
+            # Get prediction from student model only
             student_pred = student_classifier_1(student_input_data)
             student_probs = student_pred.detach().cpu().numpy()
         
-        # Average the predictions (ensemble)
-        byol_fraud_prob = byol_probs[:, 1] if byol_probs.shape[1] > 1 else byol_probs[:, 0]
-        student_fraud_prob = student_probs.flatten()
-        
-        # Calculate ensemble probability
-        ensemble_prob = (byol_fraud_prob + student_fraud_prob) / 2
+        # Use only student model prediction
+        fraud_probability = float(student_probs.flatten()[0])
         
         # Make prediction based on threshold
-        predicted_class = int(ensemble_prob[0] > 0.5)
+        predicted_class = int(fraud_probability > 0.5)
         
         result = {
-            'prediction': int(predicted_class),
-            'fraud_probability': float(ensemble_prob[0]),
-            'byol_prob': float(byol_fraud_prob[0]),
-            'student_prob': float(student_fraud_prob[0]),
+            'prediction': predicted_class,
+            'fraud_probability': fraud_probability,
+            'byol_prob': 0.0,  # Not using BYOL for prediction
+            'student_prob': fraud_probability,
             'features': features,
-            'fraud_probability_width': f"{float(ensemble_prob[0]) * 100:.2f}",
-            'byol_prob_width': f"{float(byol_fraud_prob[0]) * 100:.2f}",
-            'student_prob_width': f"{float(student_fraud_prob[0]) * 100:.2f}"
+            'fraud_probability_width': f"{fraud_probability * 100:.2f}",
+            'byol_prob_width': "0.00",  # Not using BYOL for prediction
+            'student_prob_width': f"{fraud_probability * 100:.2f}"
         }
         
         return render_template('results.html', result=result, single=True)
@@ -67,6 +61,7 @@ def predict_single():
         import traceback
         print(traceback.format_exc())
         return render_template('index.html', error=str(e))
+
 
 @app.route('/predict_batch', methods=['POST'])
 def predict_batch():
@@ -95,38 +90,32 @@ def predict_batch():
                 # Preprocess input data
                 input_tensor = preprocess_input(features)
                 
-                # Generate BYOL embeddings
+                # Generate BYOL embeddings (feature extraction only)
                 with torch.no_grad():
                     embeddings = byol.get_embeddings(input_tensor)
-                    embeddings_np = embeddings.cpu().numpy()
-                
-                    # Get predictions from both classifiers
-                    byol_probs = best_classifier_byol.predict_proba(embeddings_np)
-                
+                    
                     # Since student model expects 16 dimensions, we need to adjust
                     student_input_data = embeddings[:, :16]
+                    
+                    # Get prediction from student model only
                     student_pred = student_classifier_1(student_input_data)
                     student_probs = student_pred.detach().cpu().numpy()
                 
-                # Average the predictions (ensemble)
-                byol_fraud_prob = byol_probs[:, 1] if byol_probs.shape[1] > 1 else byol_probs[:, 0]
-                student_fraud_prob = student_probs.flatten()
-                
-                # Calculate ensemble probability
-                ensemble_prob = (byol_fraud_prob + student_fraud_prob) / 2
+                # Use only student model prediction
+                fraud_probability = float(student_probs.flatten()[0])
                 
                 # Make prediction based on threshold
-                predicted_class = int(ensemble_prob[0] > 0.5)
+                predicted_class = int(fraud_probability > 0.5)
                 
                 results.append({
-                    'prediction': int(predicted_class),
-                    'fraud_probability': float(ensemble_prob[0]),
-                    'byol_prob': float(byol_fraud_prob[0]),
-                    'student_prob': float(student_fraud_prob[0]),
+                    'prediction': predicted_class,
+                    'fraud_probability': fraud_probability,
+                    'byol_prob': 0.0,  # Not using BYOL for prediction
+                    'student_prob': fraud_probability,
                     'features': features,
-                    'fraud_probability_width': f"{float(ensemble_prob[0]) * 100:.2f}",
-                    'byol_prob_width': f"{float(byol_fraud_prob[0]) * 100:.2f}",
-                    'student_prob_width': f"{float(student_fraud_prob[0]) * 100:.2f}"
+                    'fraud_probability_width': f"{fraud_probability * 100:.2f}",
+                    'byol_prob_width': "0.00",  # Not using BYOL for prediction
+                    'student_prob_width': f"{fraud_probability * 100:.2f}"
                 })
             
             return render_template('results.html', results=results, single=False)
@@ -137,6 +126,7 @@ def predict_batch():
         import traceback
         print(traceback.format_exc())
         return render_template('index.html', error=str(e))
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
