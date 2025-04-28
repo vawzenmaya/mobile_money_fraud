@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fraud Detection System</h1>
+            <p>Detect fraudulent transactions using advanced machine learning models</p>
+        </header>
+
+        {% if error %}
+        <div class="error-message">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'single')">Single Transaction</button>
+            <button class="tab-btn" onclick="openTab(event, 'batch')">Batch Processing</button>
+        </div>
+
+        <div id="single" class="tab-content active">
+            <h2>Predict Single Transaction</h2>
+            <form action="/predict_single" method="post">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="feature_0">Step</label>
+                        <input type="number" id="feature_0" name="feature_0" value="0" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_1">Card ID</label>
+                        <input type="number" id="feature_1" name="feature_1" value="4779013371563747" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_2">Account ID</label>
+                        <input type="number" id="feature_2" name="feature_2" value="750003564" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_3">Transaction Type</label>
+                        <input type="number" id="feature_3" name="feature_3" value="0" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_4">Amount</label>
+                        <input type="number" id="feature_4" name="feature_4" value="546.89" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_5">Old Balance Orig</label>
+                        <input type="number" id="feature_5" name="feature_5" value="159148.76" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_6">New Balance Orig</label>
+                        <input type="number" id="feature_6" name="feature_6" value="158601.88" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_7">Old Balance Dest</label>
+                        <input type="number" id="feature_7" name="feature_7" value="0.0" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feature_8">New Balance Dest</label>
+                        <input type="number" id="feature_8" name="feature_8" value="546.89" step="any" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Predict</button>
+            </form>
+        </div>
+
+        <div id="batch" class="tab-content">
+            <h2>Batch Process Transactions</h2>
+            <form action="/predict_batch" method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="file">Upload CSV File</label>
+                    <input type="file" id="file" name="file" accept=".csv" required>
+                    <small>CSV format should contain transaction features in each row (9 columns)</small>
+                </div>
+                <button type="submit" class="btn">Process File</button>
+            </form>
+            <div class="sample-format">
+                <h3>Sample CSV Format:</h3>
+                <pre>0,4779013371563747,750003564,0,546.89,159148.76,158601.88,0.0,546.89
+0,4779013371563747,4593247015015219,1,16973.75,158601.88,141628.12,54.33,17028.08
+...</pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

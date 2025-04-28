@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Fraud Detection Results</h1>
+            <a href="/" class="back-btn">← Back to Home</a>
+        </header>
+
+        {% if single %}
+            <div class="result-card {% if result.prediction == 1 %}fraud{% else %}legitimate{% endif %}">
+                <h2>Transaction Analysis</h2>
+                <div class="prediction-badge {% if result.prediction == 1 %}fraud{% else %}legitimate{% endif %}">
+                    {% if result.prediction == 1 %}
+                        FRAUD DETECTED
+                    {% else %}
+                        LEGITIMATE
+                    {% endif %}
+                </div>
+                
+                <div class="probability-meter">
+                    <div class="meter-label">Fraud Probability: {{ "%.2f"|format(result.fraud_probability * 100) }}%</div>
+                    <div class="meter">
+                        <div class="meter-fill" data-percentage="{{ result.fraud_probability_width }}"></div>
+                    </div>
+                </div>
+                
+                <div class="model-details">
+                    <div class="model-score">
+                        <h3>BYOL Model</h3>
+                        <div class="score">{{ "%.2f"|format(result.byol_prob * 100) }}%</div>
+                    </div>
+                    <div class="model-score">
+                        <h3>Student Model</h3>
+                        <div class="score">{{ "%.2f"|format(result.student_prob * 100) }}%</div>
+                    </div>
+                </div>
+                
+                <div class="transaction-details">
+                    <h3>Transaction Details</h3>
+                    <table>
+                        <tr>
+                            <th>Step</th>
+                            <th>Card ID</th>
+                            <th>Account ID</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                        </tr>
+                        <tr>
+                            <td>{{ result.features[0] }}</td>
+                            <td>{{ result.features[1] }}</td>
+                            <td>{{ result.features[2] }}</td>
+                            <td>{{ "PAYMENT" if result.features[3] == 1 else "TRANSFER" }}</td>
+                            <td>${{ "%.2f"|format(result.features[4]) }}</td>
+                        </tr>
+                    </table>
+                    
+                    <table class="balance-table">
+                        <tr>
+                            <th>Old Balance Orig</th>
+                            <th>New Balance Orig</th>
+                            <th>Old Balance Dest</th>
+                            <th>New Balance Dest</th>
+                        </tr>
+                        <tr>
+                            <td>${{ "%.2f"|format(result.features[5]) }}</td>
+                            <td>${{ "%.2f"|format(result.features[6]) }}</td>
+                            <td>${{ "%.2f"|format(result.features[7]) }}</td>
+                            <td>${{ "%.2f"|format(result.features[8]) }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        {% else %}
+            <div class="batch-results">
+                <h2>Batch Processing Results</h2>
+                <div class="summary">
+                    <div class="summary-item">
+                        <span class="summary-label">Total Transactions:</span>
+                        <span class="summary-value">{{ results|length }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Fraudulent Transactions:</span>
+                        <span class="summary-value">{{ results|selectattr('prediction', 'equalto', 1)|list|length }}</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Legitimate Transactions:</span>
+                        <span class="summary-value">{{ results|selectattr('prediction', 'equalto', 0)|list|length }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="results-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Transaction</th>
+                            <th>Amount</th>
+                            <th>Type</th>
+                            <th>Prediction</th>
+                            <th>Fraud Probability</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for result in results %}
+                        <tr class="{% if result.prediction == 1 %}fraud-row{% endif %}">
+                            <td>{{ loop.index }}</td>
+                            <td>${{ "%.2f"|format(result.features[4]) }}</td>
+                            <td>{{ "PAYMENT" if result.features[3] == 1 else "TRANSFER" }}</td>
+                            <td>
+                                <span class="prediction-badge small {% if result.prediction == 1 %}fraud{% else %}legitimate{% endif %}">
+                                    {% if result.prediction == 1 %}FRAUD{% else %}OK{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="mini-meter">
+                                    <div class="mini-meter">
+                                        <div class="mini-meter-fill" data-percentage="{{ result.fraud_probability_width }}"></div>
+                                    </div>
+                                </div>
+                                {{ "%.2f"|format(result.fraud_probability * 100) }}%
+                            </td>
+                            <td>
+                                <button class="details-btn" onclick="toggleDetails('details-{{ loop.index }}')">View</button>
+                            </td>
+                        </tr>
+                        <tr id="details-{{ loop.index }}" class="details-row">
+                            <td colspan="6">
+                                <div class="details-content">
+                                    <div class="model-details">
+                                        <div class="model-score">
+                                            <h4>BYOL Model</h4>
+                                            <div class="score">{{ "%.2f"|format(result.byol_prob * 100) }}%</div>
+                                        </div>
+                                        <div class="model-score">
+                                            <h4>Student Model</h4>
+                                            <div class="score">{{ "%.2f"|format(result.student_prob * 100) }}%</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="transaction-details">
+                                        <table class="details-table">
+                                            <tr>
+                                                <th>Step</th>
+                                                <th>Card ID</th>
+                                                <th>Account ID</th>
+                                                <th>Amount</th>
+                                            </tr>
+                                            <tr>
+                                                <td>{{ result.features[0] }}</td>
+                                                <td>{{ result.features[1] }}</td>
+                                                <td>{{ result.features[2] }}</td>
+                                                <td>${{ "%.2f"|format(result.features[4]) }}</td>
+                                            </tr>
+                                        </table>
+                                        
+                                        <table class="details-table">
+                                            <tr>
+                                                <th>Old Balance Orig</th>
+                                                <th>New Balance Orig</th>
+                                                <th>Old Balance Dest</th>
+                                                <th>New Balance Dest</th>
+                                            </tr>
+                                            <tr>
+                                                <td>${{ "%.2f"|format(result.features[5]) }}</td>
+                                                <td>${{ "%.2f"|format(result.features[6]) }}</td>
+                                                <td>${{ "%.2f"|format(result.features[7]) }}</td>
+                                                <td>${{ "%.2f"|format(result.features[8]) }}</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="export-options">
+                <button class="btn" onclick="exportResults()">Export Results (CSV)</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
