@@ -1,6 +1,5 @@
-# Use specific versions that have pre-built wheels
 flask==2.0.1
-# Use a newer version of NumPy that has pre-built wheels for Python 3.11
+Werkzeug==2.0.1
 numpy==1.24.3
 pandas==1.5.3
 scikit-learn==1.2.2
