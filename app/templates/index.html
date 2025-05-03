@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fraud Detection System</title>
+    <title>MobileMoneyGuardian</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Fraud Detection System</h1>
+            <h1>MobileMoneyGuardian</h1>
             <p>Detect fraudulent transactions using advanced machine learning models</p>
         </header>
 
@@ -33,11 +33,11 @@
                         <input type="number" id="feature_0" name="feature_0" value="0" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label for="feature_1">Card ID</label>
+                        <label for="feature_1">Initiator</label>
                         <input type="number" id="feature_1" name="feature_1" value="4779013371563747" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label for="feature_2">Account ID</label>
+                        <label for="feature_2">Recipient</label>
                         <input type="number" id="feature_2" name="feature_2" value="750003564" step="any" required>
                     </div>
                     <div class="form-group">
@@ -49,19 +49,19 @@
                         <input type="number" id="feature_4" name="feature_4" value="546.89" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label for="feature_5">Old Balance Orig</label>
+                        <label for="feature_5">Old Balance Of Initiator</label>
                         <input type="number" id="feature_5" name="feature_5" value="159148.76" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label for="feature_6">New Balance Orig</label>
+                        <label for="feature_6">New Balance Of Initiator</label>
                         <input type="number" id="feature_6" name="feature_6" value="158601.88" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label for="feature_7">Old Balance Dest</label>
+                        <label for="feature_7">Old Balance Of Recipient</label>
                         <input type="number" id="feature_7" name="feature_7" value="0.0" step="any" required>
                     </div>
                     <div class="form-group">
-                        <label for="feature_8">New Balance Dest</label>
+                        <label for="feature_8">New Balance Of Recipient</label>
                         <input type="number" id="feature_8" name="feature_8" value="546.89" step="any" required>
                     </div>
                 </div>
