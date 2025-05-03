@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fraud Detection Results</title>
+    <title>MobileMoneyGuardian</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Fraud Detection Results</h1>
+            <h1>MobileMoneyGuardian</h1>
             <a href="/" class="back-btn">← Back to Home</a>
         </header>
 
@@ -47,8 +47,8 @@
                     <table>
                         <tr>
                             <th>Step</th>
-                            <th>Card ID</th>
-                            <th>Account ID</th>
+                            <th>Initiator</th>
+                            <th>Recipient</th>
                             <th>Type</th>
                             <th>Amount</th>
                         </tr>
@@ -63,10 +63,10 @@
                     
                     <table class="balance-table">
                         <tr>
-                            <th>Old Balance Orig</th>
-                            <th>New Balance Orig</th>
-                            <th>Old Balance Dest</th>
-                            <th>New Balance Dest</th>
+                            <th>Old Balance Of Initiator</th>
+                            <th>New Balance Of Initiator</th>
+                            <th>Old Balance Of Recipient</th>
+                            <th>New Balance Of Recipient</th>
                         </tr>
                         <tr>
                             <td>${{ "%.2f"|format(result.features[5]) }}</td>
@@ -149,8 +149,9 @@
                                         <table class="details-table">
                                             <tr>
                                                 <th>Step</th>
-                                                <th>Card ID</th>
-                                                <th>Account ID</th>
+                                                <th>Initiator</th>
+                                                <th>Recipient</th>
+                                                <th>Type</th>
                                                 <th>Amount</th>
                                             </tr>
                                             <tr>
@@ -163,10 +164,10 @@
                                         
                                         <table class="details-table">
                                             <tr>
-                                                <th>Old Balance Orig</th>
-                                                <th>New Balance Orig</th>
-                                                <th>Old Balance Dest</th>
-                                                <th>New Balance Dest</th>
+                                                <th>Old Balance Of Initiator</th>
+                                                <th>New Balance Of Initiator</th>
+                                                <th>Old Balance Of Recipient</th>
+                                                <th>New Balance Of Recipient</th>
                                             </tr>
                                             <tr>
                                                 <td>${{ "%.2f"|format(result.features[5]) }}</td>
